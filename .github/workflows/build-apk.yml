@@ -14,12 +14,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract Android project
+            - name: Extract Android project
         run: |
-          mkdir project
-          unzip -q Aviator74107831_GitHub_Build.zip -d project
-          PROJECT_DIR=$(find project -name settings.gradle -type f -print -quit | xargs dirname)
+          mkdir -p project
+          echo "Files in repository:"
+          ls -la
+          ZIP_FILE=$(find . -maxdepth 2 -type f -iname "*.zip" | head -n 1)
+          echo "ZIP found: $ZIP_FILE"
+          if [ -z "$ZIP_FILE" ]; then
+            echo "ERROR: No ZIP file found"
+            exit 1
+          fi
+          unzip -q "$ZIP_FILE" -d project
+          PROJECT_DIR=$(find project \( -name settings.gradle -o -name settings.gradle.kts \) -type f -print -quit | xargs dirname)
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+      
+          
+  
+      
+        
+          
+          
+      
 
       - name: Set up Java
         uses: actions/setup-java@v4
